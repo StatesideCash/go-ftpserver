@@ -1,6 +1,15 @@
 package main
 
-/// Monitor the state of the connection
+import (
+	"errors"
+)
+
+// ConnState tracks the state of the connection
 type ConnState struct {
 	Username string
+	Password string
 }
+
+var (
+	errNoUsername = errors.New("Password given but no username supplied")
+)
