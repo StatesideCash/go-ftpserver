@@ -33,6 +33,7 @@ func FTPServ(iface, port string) {
 // FTP command channel, where they can change the state of thier session. This
 // function also processes the user's input through the correct handler.
 func HandleCommandChannel(conn net.Conn) {
+	state := new(ConnState)
 	reader := bufio.NewReader(conn) // Reader to simplify reading input
 
 	for {
@@ -54,7 +55,19 @@ func HandleCommandChannel(conn net.Conn) {
 			args = strings.TrimSpace(string(command[len(action)+1 : len(command)-1]))
 		}
 
-		// TODO Remove
-		fmt.Printf("%s: %s\n", action, args)
+		// Selects the right handler to use
+		switch action {
+		case "USER":
+			err = HandleUser(args, state)
+		case "PASS":
+			err = HandlePassword(args, state)
+		}
+
+		//TODO Remove debug statement
+		fmt.Printf("%#v\n", state)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }

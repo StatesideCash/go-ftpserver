@@ -1,6 +1,7 @@
 package main
 
 // HandleUser takes the supplied username and applies it to the connection state
+// The password and all account data is overwritten when this is done
 func HandleUser(username string, state *ConnState) error {
 	state.Username = username
 	state.Password = ""
@@ -8,10 +9,11 @@ func HandleUser(username string, state *ConnState) error {
 }
 
 // HandlePassword sets the provided password for the connection.
-// Throws errNoUsername if no username has been set.
+// Returns errNoUsername if no username has been set.
 func HandlePassword(password string, state *ConnState) error {
 	if state.Username == "" {
 		return errNoUsername
 	}
+	state.Password = password
 	return nil
 }
