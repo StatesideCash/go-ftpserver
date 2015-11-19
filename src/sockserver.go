@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 )
 
@@ -33,8 +34,15 @@ func FTPServ(iface, port string) {
 // FTP command channel, where they can change the state of thier session. This
 // function also processes the user's input through the correct handler.
 func HandleCommandChannel(conn net.Conn) {
-	state := new(ConnState)
+	var err error                   // Error checks
+	state := new(ConnState)         // The state for the user's connection
 	reader := bufio.NewReader(conn) // Reader to simplify reading input
+
+	// Set the CWD for the session
+	state.Directory, err = os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	for {
 		// Reads until a newline. I use \n for the delimiter instead of \r\n in case
@@ -61,12 +69,18 @@ func HandleCommandChannel(conn net.Conn) {
 			err = HandleUser(args, state)
 		case "PASS":
 			err = HandlePassword(args, state)
+		case "CWD":
+			err = HandleCWD(args, state)
 		}
 
 		//TODO Remove debug statement
+		fmt.Println(action + ": " + args)
 		fmt.Printf("%#v\n", state)
 
-		if err != nil {
+		if _, ok := err.(*os.PathError); ok {
+			// TODO Handle invalid directory error
+			log.Fatal(err)
+		} else if err != nil {
 			log.Fatal(err)
 		}
 	}

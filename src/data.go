@@ -9,8 +9,10 @@ type ConnState struct {
 	Username      string
 	Password      string
 	Authenticated bool
+	Directory     string
 }
 
 var (
-	errNoUsername = errors.New("Password given but no username supplied")
+	errNoUsername     = errors.New("Password given but no username supplied")
+	errAuthentication = errors.New("Could not authenticate user")
 )
