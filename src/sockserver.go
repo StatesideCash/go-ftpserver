@@ -53,11 +53,12 @@ func HandleCommandChannel(conn net.Conn) {
 		}
 		action := strings.Split(string(command), " ")[0]
 		action = strings.ToUpper(action)
+		action = strings.TrimSpace(action)
 
 		// The arguments provided to the command. It is up to the handler functions
 		// to make sure they are proverly formatted and such.
 		var args string
-		if len(command) <= len(action) {
+		if len(strings.TrimSpace(command)) <= len(strings.TrimSpace(action)) {
 			args = ""
 		} else {
 			args = strings.TrimSpace(string(command[len(action)+1 : len(command)-1]))
