@@ -72,16 +72,20 @@ func HandleCommandChannel(conn net.Conn) {
 			err = HandlePassword(args, state)
 		case "CWD":
 			err = HandleCWD(args, state)
+		case "CDUP":
+			err = HandleCDUP(state)
+		default:
+			fmt.Printf("Invalid command: %s", action)
 		}
 
 		//TODO Remove debug statement
-		fmt.Println(action + ": " + args)
 		fmt.Printf("%#v\n", state)
 
 		if _, ok := err.(*os.PathError); ok {
 			// TODO Handle invalid directory error
 			log.Fatal(err)
 		} else if err != nil {
+			fmt.Printf("%T\n", err)
 			log.Fatal(err)
 		}
 	}
